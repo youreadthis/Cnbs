@@ -49,7 +49,7 @@ def create_region(coords, R1, R2, R3):
     print("Введите процент свобод площади для средней Бс: ")
     cof_2 = vvod_percent()
     print("Введите процент свобод площади для малой Бс: ")
-    cof_3 = vvod_percent
+    cof_3 = vvod_percent()
     return base_region.Region(coords, R1, R2, R3, percent1=cof_1, percent2=cof_2, percent3=cof_3)
 
 def main():
@@ -65,6 +65,7 @@ def main():
             coords.append(ans)
         print(f"Введено координат {len(coords)}")
     region = create_region(coords, R1, R2, R3)
+    print(region)
     base_region.visualize_towers(region, R1, R2, R3)
 
 
