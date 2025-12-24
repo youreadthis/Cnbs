@@ -1,5 +1,7 @@
 import math
 import random
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle, Polygon
 
 
 class Region:
@@ -89,7 +91,7 @@ class Region:
             f"========================================\n"
             f"Геометрия:\n"
             f"  • Вершин:  {len(self.coordinates)}\n"
-            f"  • Площадь: {area_str} кв. ед.\n"
+            f"  • Площадь: {area_str} кв. км.\n"
             f"----------------------------------------\n"
             f"Инфраструктура:\n"
             f"  • Всего вышек: {total_towers}\n"
@@ -319,7 +321,7 @@ class Region:
         return new_circles
 
     def find_all_centers_of_towers(self, r1: float, r2: float, r3: float, 
-                                   percent1: int = 70, percent2: int = 70, percent3: int = 70) -> dict:
+                                   percent1: int = 60, percent2: int = 60, percent3: int = 60) -> dict:
         """
         Находит центры башен.
         r1 - самый большой радиус, r2 - средний, r3 - самый маленький.
@@ -363,4 +365,71 @@ class Region:
             'r3_centers': circles_r3
         }
     
+def visualize_towers(region: Region, r1: float, r2: float, r3: float):
+    """
+    Визуализирует регион и размещенные башни.
+    
+    Args:
+        region: Экземпляр класса Region.
+        r1, r2, r3: Радиусы для отрисовки (должны совпадать с расчетными).
+        results: (Опционально) Словарь с центрами. Если не передан, берется из region.
+    """
+    results = region.get_centers_of_towers()
+        
+    if not results:
+        print("Нет данных для визуализации (results пуст).")
+        return
 
+    fig, ax = plt.subplots(figsize=(10, 10))
+    
+    # 1. Отрисовка границ региона
+    poly_patch = Polygon(region.coordinates, 
+                         closed=True, 
+                         fill=False, 
+                         edgecolor='black', 
+                         linewidth=2, 
+                         label='Граница региона')
+    ax.add_patch(poly_patch)
+    
+    # Автоматическое масштабирование осей
+    (min_x, min_y), (max_x, max_y) = region.rectangle
+    # Добавляем самый большой радиус к границам графика, чтобы круги не обрезались
+    margin = r1 * 1.2
+    ax.set_xlim(min_x - margin, max_x + margin)
+    ax.set_ylim(min_y - margin, max_y + margin)
+    
+    # 2. Функция для отрисовки слоя
+    def plot_layer(centers, radius, color, label_prefix):
+        if not centers:
+            return
+        
+        # Добавляем в легенду только первую точку слоя
+        ax.plot([], [], color=color, marker='o', linestyle='None', 
+                alpha=0.5, markersize=10, 
+                label=f"{label_prefix} (R={radius}, N={len(centers)})")
+        
+        for cx, cy in centers:
+            circle = Circle((cx, cy), radius, color=color, alpha=0.4, linewidth=0)
+            ax.add_patch(circle)
+            # Точка в центре
+            ax.plot(cx, cy, '.', color='black', markersize=1, alpha=0.3)
+
+    # 3. Рисуем слои (от больших к маленьким)
+    if 'r1_centers' in results:
+        plot_layer(results['r1_centers'], r1, 'blue', 'Tower R1')
+        
+    if 'r2_centers' in results:
+        plot_layer(results['r2_centers'], r2, 'green', 'Tower R2')
+        
+    if 'r3_centers' in results:
+        plot_layer(results['r3_centers'], r3, 'red', 'Tower R3')
+
+    # 4. Настройки
+    ax.set_aspect('equal')
+    plt.grid(True, linestyle='--', alpha=0.3)
+    
+    total_towers = sum(len(v) for v in results.values())
+    plt.title(f"Размещение башен: Всего {total_towers} шт.")
+    plt.legend(loc='upper right')
+    
+    plt.show()

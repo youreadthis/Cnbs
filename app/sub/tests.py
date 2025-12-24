@@ -1,20 +1,19 @@
-import visualization
+
 import base_region
 
 
 
-# 1. Создаем регион (например, сложный пятиугольник)
 coords = [(0, 0), (300, 0), (300, 200), (150, 300), (0, 200)]
-region = base_region.Region(coords)
 
-# 2. Задаем параметры
-R1, R2, R3 = 20, 8, 4.5
+# Радиусы
+R1, R2, R3 = 28, 12, 4
 
-# 3. Считаем
-print("Вычисляем...")
-towers = region.find_all_centers_of_towers(R1, R2, R3, percent1=80, percent2=65, percent3=90)
+print("Инициализация и расчет...")
 
-print(region)
+# ТЕПЕРЬ МОЖНО ТАК: Создаем и сразу считаем
+my_region = base_region.Region(coords, r1=R1, r2=R2, r3=R3)
 
-# 4. Рисуем
-visualization.visualize_towers(region, towers, R1, R2, R3)
+print(my_region)
+
+# Визуализация: теперь можно не передавать results, они возьмутся из my_region
+base_region.visualize_towers(my_region, R1, R2, R3)
