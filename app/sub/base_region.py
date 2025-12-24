@@ -4,14 +4,17 @@ import random
 
 class Region:
     """Класс, представляющий географический регион."""
-    def __init__(self, coordinates:list[tuple]):
+    def __init__(self, coordinates:list[tuple], r1:float=None, r2:float=None, r3:float=None, procent1:int=70, procent2:int=70, procent3:int=70):
         """Инициализирует регион с заданными координатами вершин."""
         if not coordinates or len(coordinates) < 3:
             raise ValueError("less than 3 coordinates provided")
         self.coordinates = coordinates
         self.area = self.calculate_area()
         self.rectangle = self.calculate_rectangle()
-        self.centers_of_towers = {}
+        if r1 is not None and r2 is not None and r3 is not None:
+            self.find_all_centers_of_towers(r1, r2, r3, procent1, procent2, procent3)
+        else:
+            self.centers_of_towers = {}
     def calculate_area(self):
         """Вычисляет площадь многоугольника по формуле Гаусса."""
         coords = self.coordinates
@@ -203,12 +206,12 @@ class Region:
         return area
 
     def pack_secondary_circles(self, 
-                               r_new: int, 
+                               r_new: float, 
                                percent: int, 
                                existing_circles: list[tuple], 
-                               r_existing: int, 
+                               r_existing: float, 
                                existing_circles_2: list[tuple] = None, 
-                               r_existing_2: int = None,
+                               r_existing_2: float = None,
                                accuracy: int = 20):
         """
         Размещает новые окружности (r_new).
@@ -303,7 +306,7 @@ class Region:
             
         return new_circles
 
-    def find_all_centers_of_towers(self, r1: int, r2: int, r3: int, 
+    def find_all_centers_of_towers(self, r1: float, r2: float, r3: float, 
                                    percent1: int = 70, percent2: int = 70, percent3: int = 70) -> dict:
         """
         Находит центры башен.
