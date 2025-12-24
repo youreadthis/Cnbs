@@ -10,3 +10,7 @@
 1. **Установите зависимости:**
    ```bash
    pip install -r requirements.txt
+
+2. **Установите зависимости:**
+    ``bash
+    python app/main.py
