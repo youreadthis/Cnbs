@@ -39,16 +39,23 @@ def chose_rad():
 def vvod_percent():
     vvod = input()
     if vvod.isdigit():
-        return vvod
+        return int(vvod)
+    if vvod=="-":
+        return None
     print("Введите целое число")
     vvod_percent()
 
 def create_region(coords, R1, R2, R3):
-    print("Введите процент свобод площади для большей Бс: ")
+    cof_1,cof_2,cof_3=None,None,None
+    print("Введите процент свободы площади для большей Бс (или - для пропуска): ")
     cof_1 = vvod_percent()
-    print("Введите процент свобод площади для средней Бс: ")
+    if cof_1==None:
+        return base_region.Region(coords, R1, R2, R3, percent1=cof_1, percent2=cof_2, percent3=cof_3)
+    print("Введите процент свободы площади для большей Бс (или - для пропуска): ")
     cof_2 = vvod_percent()
-    print("Введите процент свобод площади для малой Бс: ")
+    if cof_2==None:
+        return base_region.Region(coords, R1, R2, R3, percent1=cof_1, percent2=cof_2, percent3=cof_3)
+    print("Введите процент свободы площади для большей Бс (или - для пропуска): ")
     cof_3 = vvod_percent()
     return base_region.Region(coords, R1, R2, R3, percent1=cof_1, percent2=cof_2, percent3=cof_3)
 
