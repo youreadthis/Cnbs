@@ -321,7 +321,7 @@ class Region:
         return new_circles
 
     def find_all_centers_of_towers(self, r1: float, r2: float, r3: float, 
-                                   percent1: int = 70, percent2: int = 70, percent3: int = 70) -> dict:
+                                   percent1: int = 60, percent2: int = 60, percent3: int = 60) -> dict:
         """
         Находит центры башен.
         r1 - самый большой радиус, r2 - средний, r3 - самый маленький.
