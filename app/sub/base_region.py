@@ -11,6 +11,7 @@ class Region:
         self.coordinates = coordinates
         self.area = self.calculate_area()
         self.rectangle = self.calculate_rectangle()
+        self.centers_of_towers = {}
     def calculate_area(self):
         """Вычисляет площадь многоугольника по формуле Гаусса."""
         coords = self.coordinates
@@ -44,6 +45,43 @@ class Region:
         return self.rectangle
     def get_coordinates(self):
         return self.coordinates
+    def get_centers_of_towers(self):
+        return self.centers_of_towers
+    def get_number_of_towers(self):
+        return {k: len(v) for k, v in self.centers_of_towers.items()}
+    def get_total_number_of_towers(self):
+        return sum(len(v) for v in self.centers_of_towers.values())
+    def __str__(self):
+        # 1. Получаем данные
+        total_towers = self.get_total_number_of_towers()
+        towers_breakdown = self.get_number_of_towers()
+        
+        details_list = []
+        # Сортируем ключи, чтобы R1 всегда был перед R2
+        for key in sorted(towers_breakdown.keys()):
+            count = towers_breakdown[key]
+            clean_name = key.replace('_centers', '').upper()
+            details_list.append(f"  • {clean_name}: {count} шт.")
+        
+        details_str = "\n".join(details_list) if details_list else "  (нет данных)"
+
+        # 3. Форматируем площадь (2 знака после запятой)
+        area_str = f"{self.area:,.2f}".replace(",", " ")
+
+        return (
+            f"========================================\n"
+            f"📍 ОТЧЕТ О РЕГИОНЕ\n"
+            f"========================================\n"
+            f"Геометрия:\n"
+            f"  • Вершин:  {len(self.coordinates)}\n"
+            f"  • Площадь: {area_str} кв. ед.\n"
+            f"----------------------------------------\n"
+            f"Инфраструктура:\n"
+            f"  • Всего вышек: {total_towers}\n"
+            f"  • Детализация:\n"
+            f"{details_str}\n"
+            f"========================================"
+        )
     def contains(self, point:tuple):
         """Проверяет, находится ли точка внутри региона."""
         x, y = point
@@ -299,7 +337,11 @@ class Region:
             r_existing_2=r2, 
             accuracy=20
         )
-
+        self.centers_of_towers = {
+            'r1_centers': circles_r1,
+            'r2_centers': circles_r2,
+            'r3_centers': circles_r3
+        }
         return {
             'r1_centers': circles_r1,
             'r2_centers': circles_r2,
