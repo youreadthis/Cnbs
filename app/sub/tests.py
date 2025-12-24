@@ -37,7 +37,7 @@ def visualize_towers(region, results, r1, r2, r3):
         # Используем alpha (прозрачность), чтобы видеть наложения
         for i, (cx, cy) in enumerate(centers):
             # Метка только для первого элемента, чтобы легенда не дублировалась
-            label = f"{label_prefix} (r={radius})" if i == 0 else None
+            label = f"{label_prefix} (r={radius}), количество={len(centers)}" if i == 0 else None
             
             circle = Circle((cx, cy), radius, color=color, alpha=0.4, label=label)
             ax.add_patch(circle)
@@ -71,7 +71,7 @@ def visualize_towers(region, results, r1, r2, r3):
 # --- ПРИМЕР ИСПОЛЬЗОВАНИЯ ---
 if True:
     # 1. Создаем регион (например, сложный пятиугольник)
-    coords = [(0, 0), (3000, 0), (3000, 2000), (1500, 3000), (0, 2000), (200, 1000), (1500,50)]
+    coords = [(0, 0), (300, 0), (300, 200), (150, 300), (0, 200)]
     region = base_region.Region(coords)
 
     # 2. Задаем параметры
