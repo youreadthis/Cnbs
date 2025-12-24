@@ -23,4 +23,4 @@ def parsing_base_station(filename:str="Базовыестанции.csv"):
         towers = []
         for row in reader:
             towers.append(Tower(row[0], row[1], row[2].replace(",", "."), row[3], row[4], row[5], row[6]))  #заносим всё в массив для работы
-        return sorted(towers, key=lambda x: x.square)                                                       #возращаем отсортированный по площаде покрытия
+        return sorted(towers, key=lambda x: x.square, reverse=True)                                                       #возращаем отсортированный по площаде покрытия
