@@ -254,3 +254,11 @@ class Region:
             'r2_centers': circles_r2,
             'r3_centers': circles_r3
         }
+    
+# --- IGNORE ---
+# Пример использования:
+region = Region([(0,0), (100,0), (100,100), (0,100)])
+towers = region.find_all_centers_of_towers(r1=15, r2=10, r3=5)
+print("R1 Centers:", towers['r1_centers'])
+print("R2 Centers:", towers['r2_centers'])
+print("R3 Centers:", towers['r3_centers'])
