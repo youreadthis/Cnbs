@@ -43,7 +43,7 @@ def vvod_percent():
     if vvod=="-":
         return None
     print("Введите целое число")
-    vvod_percent()
+    return vvod_percent()
 
 def create_region(coords, R1, R2, R3):
     cof_1,cof_2,cof_3=None,None,None
