@@ -1,7 +1,6 @@
-from ..app.sub.classes import Tower
+from ..app.sub import Tower
 from ..app.sub import classes
 from ..app.sub import base_region
-from ..app.sub import visualization
 def read_and_validate_two_numbers(vvod:str) -> tuple:
     try:
         # Считываем строку и разбиваем на части
@@ -42,4 +41,4 @@ def main():
             coords.append(ans)
         print(f"Введено координат {len(coords)}")
     region = base_region.Region(coords, R1, R2, R3)
-     = visualization
+    base_region.visualize_towers(region, R1, R2, R3)
