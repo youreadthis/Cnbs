@@ -365,7 +365,7 @@ class Region:
             'r3_centers': circles_r3
         }
     
-def visualize_towers(region: Region, r1: float, r2: float, r3: float, results: dict = None):
+def visualize_towers(region: Region, r1: float, r2: float, r3: float):
     """
     Визуализирует регион и размещенные башни.
     
@@ -374,9 +374,7 @@ def visualize_towers(region: Region, r1: float, r2: float, r3: float, results: d
         r1, r2, r3: Радиусы для отрисовки (должны совпадать с расчетными).
         results: (Опционально) Словарь с центрами. Если не передан, берется из region.
     """
-    # Если результаты не переданы явно, берем их из самого объекта
-    if results is None:
-        results = region.get_centers_of_towers()
+    results = region.get_centers_of_towers()
         
     if not results:
         print("Нет данных для визуализации (results пуст).")
