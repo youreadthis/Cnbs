@@ -4,17 +4,29 @@ import random
 
 class Region:
     """Класс, представляющий географический регион."""
-    def __init__(self, coordinates:list[tuple], r1:float=None, r2:float=None, r3:float=None, procent1:int=70, procent2:int=70, procent3:int=70):
-        """Инициализирует регион с заданными координатами вершин."""
+    def __init__(self, coordinates: list[tuple], 
+                 r1: float = None, r2: float = None, r3: float = None, 
+                 percent1: int = 70, percent2: int = None, percent3: int = None):
+        """
+        Инициализирует регион. Если переданы r1, r2, r3, сразу производит расчет башен.
+        """
+        # Базовая валидация и геометрия
         if not coordinates or len(coordinates) < 3:
             raise ValueError("less than 3 coordinates provided")
         self.coordinates = coordinates
         self.area = self.calculate_area()
         self.rectangle = self.calculate_rectangle()
+        
+        # Инициализация хранилища
+        self.centers_of_towers = {}
+
+        # Логика автоматического запуска
         if r1 is not None and r2 is not None and r3 is not None:
-            self.find_all_centers_of_towers(r1, r2, r3, procent1, procent2, procent3)
-        else:
-            self.centers_of_towers = {}
+            if percent2 is None:
+                percent2 = percent1
+            if percent3 is None:
+                percent3 = percent2
+            self.find_all_centers_of_towers(r1, r2, r3, percent1, percent2, percent3)
     def calculate_area(self):
         """Вычисляет площадь многоугольника по формуле Гаусса."""
         coords = self.coordinates
