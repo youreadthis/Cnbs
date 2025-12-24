@@ -12,13 +12,14 @@ class Tower():
         self.standart = standart
         
 
-def read_csv(filename:str):
+def parsing_base_station(filename:str):
     with open(filename, encoding = "UTF-8") as file:
         reader = csv.reader(file, delimiter=";")
-        next(reader)                                     #пропускаем заголовки
+        next(reader)                                                                                        #пропускаем заголовок
         towers = []
         for row in reader:
-            towers.append(Tower(row[0], row[1], row[2].replace(",", "."), row[3], row[4], row[5], row[6]))
-        return sorted(towers, key=lambda x: x.square)
+            towers.append(Tower(row[0], row[1], row[2].replace(",", "."), row[3], row[4], row[5], row[6]))  #заносим всё в массив для работы
+        return sorted(towers, key=lambda x: x.square)                                                       #возращаем отсортированный по площаде покрытия
 
-towers = read_csv("C:/Users/Владислав/Desktop/Проект/Cnbs/app/sub/Базовыестанции.csv")
+towers = parsing_base_station("Базовыестанции.csv")
+print(towers[2].square)
