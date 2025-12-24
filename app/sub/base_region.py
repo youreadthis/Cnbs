@@ -133,6 +133,37 @@ class Region:
 
         return circles
 
+    def _calculate_intersection_area(self, r1: float, r2: float, d: float) -> float:
+        """
+        Вычисляет площадь пересечения двух окружностей.
+        r1, r2: радиусы окружностей.
+        d: расстояние между центрами.
+        """
+        # 1. Если окружности не пересекаются
+        if d >= r1 + r2:
+            return 0.0
+        
+        # 2. Если одна окружность полностью внутри другой
+        if d <= abs(r1 - r2):
+            return math.pi * min(r1, r2) ** 2
+        
+        # 3. Частичное пересечение (формула через радиусы и расстояние)
+        r1_sq = r1 ** 2
+        r2_sq = r2 ** 2
+        
+        # Угол сектора первой окружности
+        alpha = math.acos((r1_sq + d**2 - r2_sq) / (2 * r1 * d))
+        # Угол сектора второй окружности
+        beta = math.acos((r2_sq + d**2 - r1_sq) / (2 * r2 * d))
+        
+        # Площадь пересечения = сумма площадей двух сегментов
+        # S_segment = 0.5 * r^2 * (angle - sin(angle)) - формула сегмента,
+        # но здесь используется оптимизированная общая формула пересечения:
+        area = r1_sq * alpha + r2_sq * beta - \
+               0.5 * math.sqrt((-d + r1 + r2) * (d + r1 - r2) * (d - r1 + r2) * (d + r1 + r2))
+               
+        return area
+
     def pack_secondary_circles(self, 
                                r_new: int, 
                                percent: int, 
@@ -142,28 +173,33 @@ class Region:
                                r_existing_2: int = None,
                                accuracy: int = 20):
         """
-        Размещает новые окружности (r_new), избегая коллизий.
+        Размещает новые окружности (r_new).
+        Условие коллизии: 'Чистая площадь' новой окружности должна быть >= percent.
+        То есть площадь пересечений не должна превышать (100 - percent).
         """
         new_circles = []
         
         obstacle_groups = []
-        
-        # Если список существующих пуст, мы не добавляем его в препятствия
         if existing_circles:
             obstacle_groups.append((existing_circles, r_existing))
-            
         if existing_circles_2 and r_existing_2 is not None:
             obstacle_groups.append((existing_circles_2, r_existing_2))
 
+        # 1. Считаем максимально допустимую площадь перекрытия
+        # Если percent=80 (хотим 80% чистого), то overlap может быть до 20%
+        circle_area = math.pi * (r_new ** 2)
+        max_allowed_overlap = circle_area * ((100 - percent) / 100.0)
+
+        # Предварительный расчет квадратов для быстрого отсева
         group_min_dists_sq = []
         for _, r_group in obstacle_groups:
+            # Дистанция, при которой круги хотя бы касаются
             dist = (r_group + r_new) ** 2 * 0.999
             group_min_dists_sq.append(dist)
 
         (min_x, min_y), (max_x, max_y) = self.rectangle
         dx = 2 * r_new
         dy_offset = math.sqrt(3) * r_new
-        
         epsilon = 1e-9
 
         y = min_y + r_new
@@ -178,32 +214,47 @@ class Region:
             x = x_start
             while x <= max_x - r_new + epsilon:
                 candidate = (x, y)
-                collision = False
+                
+                # Накопитель перекрытия для текущего кандидата
+                current_overlap = 0.0
+                is_valid = True
                 
                 for i, (group_coords, r_group) in enumerate(obstacle_groups):
                     min_dist_sq = group_min_dists_sq[i]
-                    safe_dist = r_group + r_new
+                    safe_dist = r_group + r_new # Дистанция полного касания
                     
                     for ex, ey in group_coords:
-                        dy_diff = abs(ey - y)
-
+                        # --- ОПТИМИЗАЦИИ ---
+                        # 1. Если препятствие слишком высоко по Y (список отсортирован), выходим
                         if ey > y + safe_dist:
                              break 
-                             
-                        if dy_diff > safe_dist:
+                        # 2. Быстрые проверки по осям
+                        if abs(ey - y) > safe_dist:
                             continue
-                        
                         if abs(ex - x) > safe_dist:
                             continue
                         
-                        if (ex - x)**2 + (ey - y)**2 < min_dist_sq:
-                            collision = True
-                            break 
+                        d_sq = (ex - x)**2 + (ey - y)**2
+                        
+                        # --- ПРОВЕРКА КОЛЛИЗИИ ---
+                        # Если расстояние меньше суммы радиусов -> есть пересечение
+                        if d_sq < min_dist_sq:
+                            # Считаем точную площадь пересечения
+                            dist = math.sqrt(d_sq)
+                            overlap_area = self._calculate_intersection_area(r_new, r_group, dist)
+                            current_overlap += overlap_area
+                            
+                            # Если накопленное пересечение уже больше допустимого -> окружность не подходит
+                            if current_overlap > max_allowed_overlap:
+                                is_valid = False
+                                break 
                     
-                    if collision:
-                        break
+                    if not is_valid:
+                        break # Выход из цикла по группам
 
-                if not collision:
+                # Если по коллизиям с соседями прошли, проверяем границы региона
+                if is_valid:
+                    # accuracy здесь отвечает за проверку "внутри многоугольника"
                     if self._check_circle_overlap(candidate, r_new, percent, accuracy):
                         new_circles.append(candidate)
                 
@@ -255,10 +306,4 @@ class Region:
             'r3_centers': circles_r3
         }
     
-# --- IGNORE ---
-# Пример использования:
-region = Region([(0,0), (100,0), (100,100), (0,100)])
-towers = region.find_all_centers_of_towers(r1=15, r2=10, r3=5)
-print("R1 Centers:", towers['r1_centers'])
-print("R2 Centers:", towers['r2_centers'])
-print("R3 Centers:", towers['r3_centers'])
+
