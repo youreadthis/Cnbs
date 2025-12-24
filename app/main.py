@@ -65,6 +65,7 @@ def main():
             coords.append(ans)
         print(f"Введено координат {len(coords)}")
     region = create_region(coords, R1, R2, R3)
+    print(region)
     base_region.visualize_towers(region, R1, R2, R3)
 
 
