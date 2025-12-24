@@ -28,10 +28,18 @@ def read_and_validate_two_numbers(vvod:str) -> tuple:
     except Exception:
         return False
     
+def chose_rad():
+    b_s:list[Tower] = parsing_base_station()
+    for i in range(len(b_s)):
+        print(f"N: {i}  Название вышки: {b_s[i].name}  Площадь: {b_s[i].square}")
+    n1, n2, n3 = sorted(list(map(int, input("Введите номера вышек(через пробел): ").split())))
+    R1, R2, R3 = math.sqrt(b_s[n1].square/math.pi),math.sqrt(b_s[n2].square/math.pi), math.sqrt(b_s[n3].square/math.pi)
+    return R1, R2, R3
+
 
 def main():
     b_s:list[Tower] = parsing_base_station()
-    R1, R2, R3 = math.sqrt(b_s[0].square/math.pi),math.sqrt(b_s[1].square/math.pi), math.sqrt(b_s[2].square/math.pi)
+    R1, R2, R3 = chose_rad()
     coords:list[tuple[float]] = []
     vvod = ""
     print("Введите координаты (x, y) минимум 3 или '-' для выхода")
