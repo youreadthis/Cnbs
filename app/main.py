@@ -36,6 +36,21 @@ def chose_rad():
     R1, R2, R3 = math.sqrt(b_s[n1].square/math.pi),math.sqrt(b_s[n2].square/math.pi), math.sqrt(b_s[n3].square/math.pi)
     return R1, R2, R3
 
+def vvod_percent():
+    vvod = input()
+    if vvod.isdigit():
+        return vvod
+    print("Введите целое число")
+    vvod_percent()
+
+def create_region(coords, R1, R2, R3):
+    print("Введите процент свобод площади для большей Бс: ")
+    cof_1 = vvod_percent()
+    print("Введите процент свобод площади для средней Бс: ")
+    cof_2 = vvod_percent()
+    print("Введите процент свобод площади для малой Бс: ")
+    cof_3 = vvod_percent
+    return base_region.Region(coords, R1, R2, R3, percent1=cof_1, percent2=cof_2, percent3=cof_3)
 
 def main():
     b_s:list[Tower] = parsing_base_station()
@@ -49,7 +64,7 @@ def main():
         if ans:
             coords.append(ans)
         print(f"Введено координат {len(coords)}")
-    region = base_region.Region(coords, R1, R2, R3)
+    region = create_region(coords, R1, R2, R3)
     base_region.visualize_towers(region, R1, R2, R3)
 
 
