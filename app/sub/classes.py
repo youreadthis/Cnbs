@@ -1,4 +1,6 @@
 import csv
+import os
+import sys
 
 
 class Tower():
@@ -12,14 +14,13 @@ class Tower():
         self.standart = standart
         
 
-def parsing_base_station(filename:str):
-    with open(filename, encoding = "UTF-8") as file:
+def parsing_base_station(filename:str="Базовыестанции.csv"):
+    script_dir = os.path.dirname(sys.argv[0])
+
+    with open(os.path.join(script_dir, filename), encoding = "UTF-8") as file:
         reader = csv.reader(file, delimiter=";")
         next(reader)                                                                                        #пропускаем заголовок
         towers = []
         for row in reader:
             towers.append(Tower(row[0], row[1], row[2].replace(",", "."), row[3], row[4], row[5], row[6]))  #заносим всё в массив для работы
         return sorted(towers, key=lambda x: x.square)                                                       #возращаем отсортированный по площаде покрытия
-
-towers = parsing_base_station("Базовыестанции.csv")
-print(towers[2].square)
