@@ -41,15 +41,15 @@ def vvod_percent():
     if vvod.isdigit():
         return vvod
     print("Введите целое число")
-    vvod_percent()
+    return vvod_percent()
 
 def create_region(coords, R1, R2, R3):
     print("Введите процент свобод площади для большей Бс: ")
-    cof_1 = vvod_percent()
+    cof_1 = int(vvod_percent())
     print("Введите процент свобод площади для средней Бс: ")
-    cof_2 = vvod_percent()
+    cof_2 = int(vvod_percent())
     print("Введите процент свобод площади для малой Бс: ")
-    cof_3 = vvod_percent
+    cof_3 = int(vvod_percent())
     return base_region.Region(coords, R1, R2, R3, percent1=cof_1, percent2=cof_2, percent3=cof_3)
 
 def main():
