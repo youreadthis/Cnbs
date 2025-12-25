@@ -50,13 +50,15 @@ def create_region(coords, R1, R2, R3):
     print("Введите процент свободы площади для большей Бс (или - для пропуска): ")
     cof_1 = vvod_percent()
     if cof_1==None:
-        return base_region.Region(coords, R1, R2, R3, percent1=cof_1, percent2=cof_2, percent3=cof_3)
+        return base_region.Region(coords, R1, R2, R3)
     print("Введите процент свободы площади для большей Бс (или - для пропуска): ")
     cof_2 = vvod_percent()
     if cof_2==None:
-        return base_region.Region(coords, R1, R2, R3, percent1=cof_1, percent2=cof_2, percent3=cof_3)
+        return base_region.Region(coords, R1, R2, R3, percent1=cof_1)
     print("Введите процент свободы площади для большей Бс (или - для пропуска): ")
     cof_3 = vvod_percent()
+    if cof_2==None:
+        return base_region.Region(coords, R1, R2, R3, percent1=cof_1, percent2=cof_2)
     return base_region.Region(coords, R1, R2, R3, percent1=cof_1, percent2=cof_2, percent3=cof_3)
 
 def main():
